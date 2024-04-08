@@ -7,6 +7,15 @@ import java.util.Random;
  */
 public class Clock {
     private final int time = new Random().nextInt(25);
+    private static Clock instance;
+
+    public static Clock getInstance() {
+        if (instance == null) {
+            return new Clock();
+        }
+
+        return instance;
+    }
 
     /**
      * Random integer between 0 and 24 inclusive.
