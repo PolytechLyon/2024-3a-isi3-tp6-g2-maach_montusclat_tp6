@@ -22,25 +22,73 @@ Grâce au design pattern iterateur nous n'avons pas besoin de modifier la métho
 ```java
 private static Clock instance;
 
-    public static Clock getInstance() {
-        if (instance == null) {
-            return new Clock();
-        }
+private Clock() {
+}
 
-        return instance;
+public static Clock getInstance() {
+    if (instance == null) {
+        instance = new Clock();
     }
+
+    return instance;
+}
 ```
 
-Nous avons créé une instance statique de la classe `Clock` appelée `instance`. La méthode `getInstance()` vérifie si l'instance est nulle, si c'est le cas, elle crée une nouvelle instance de `Clock` et la retourne. Sinon, elle retourne l'instance existante. De cette manière, nous nous assurons qu'il n'y a qu'une seule instance de la classe `Clock` dans l'application.
+Nous avons créé une instance statique de la classe `Clock` appelée `instance`. La méthode `getInstance()` vérifie si l'instance est nulle, si c'est le cas, elle crée une nouvelle instance de `Clock`. Elle retourne alors soit la nouvelle instance soit l'existante. De cette manière, nous nous assurons qu'il n'y a qu'une seule instance de la classe `Clock` dans l'application.
+De plus nous avons passé le constructeur de la classe en privé afin d'empêcher d'instancier des objets Clock sans passer par `getInstance()`.
 
 ## Exercices 4
 Les classes `Bike` et `Wheel` ne sont pas dans le même package. Nous avons des dépendances cycliques entre les deux classes. La classe `Bike` dépend de la classe `Wheel` et la classe `Wheel` dépend de la classe `Bike`.
 Cette dépendance n'adhère pas aux bonnes pratiques.
 
+La classe `Wheel` est utilisée pour calculer la vitesse de la classe `Bike` grâce à `getVelocity()`.
+
+Y a-t-il déjà une abstraction de la classe Bike qui isole cette fonctionnalité ?
+Il y a une abstraction de la classe `Bike` qui isole cette fonctionnalité dans `Vehicle` dans le package transport.
+Il faut alors modifier l'attribut `drive` de la classe `Wheel` pour qu'il soit de type `Vehicle` au lieu de `Bike` et qu'on appelle `getPush()` sur une instance de `Vehicle`.
 
 ## Exercices 5
+Utiliser le patron de conception patron de méthode[^4] pour centraliser cette étape commune à un seul endroit et d'éviter le code en doublon.
+
+Modifiez la classe NamedLogger et ses sous-classes pour réaliser ce patron.
+
+Pour cela, nous avons créé une méthode abstraite `logMessage` dans la classe `NamedLogger` qui est appelée par la méthode `log` pour chaque sous-classe.
+De cette manière on évite de duppliquer du code dans les classes `FileLogger` et `ConsoleLogger`. On a le squelette commun dans notre classe mère `NamedLogger` et on laisse les classes filles implémenter la méthode `logMessage` selon les différents besoins.
+
+```java
+@Override
+public void log(String format, Object... args) {
+    String entry = String.format(format, args);
+    String message = String.format("%s\t%s\n", this.name, entry);
+    logMessage(message);
+}
+
+protected abstract void logMessage(String message);
+```
+
+Dans notre exemple nous avions entry et message qui étaient duppliqués avant l'implémentation du design pattern.
 
 ## Exercices 6
+Pour implémenter le design pattern méthode de fabrique nous avons créé une classe abstraite `LoggerFactory` qui contient la méthode `getLogger` qui return un ConsoleLogger, de cette manière il suffit de modifier la déclaration dans nos trois classes `Wheel`, `BikeSimulator` et `Vehicle` en appellant notre méthode et en passant le nom désiré en paramètre.
+
+```java
+public abstract class FactoryLogger {
+    
+    public static Logger getLogger(String name) {
+        return new ConsoleLogger(name);
+    }
+}
+```
+
+```java
+private final Logger logger = FactoryLogger.getLogger("BikeSimulator");
+
+private final Logger logger = FactoryLogger.getLogger("Vehicle");
+
+private final Logger logger = FactoryLogger.getLogger("Wheel");
+```
+
+On obtient donc les logs dans la console de manière centralisée.
 
 ## Exercices 7
 

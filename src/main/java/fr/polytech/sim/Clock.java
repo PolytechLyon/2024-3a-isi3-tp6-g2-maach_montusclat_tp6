@@ -9,9 +9,12 @@ public class Clock {
     private final int time = new Random().nextInt(25);
     private static Clock instance;
 
+    private Clock() {
+    }
+
     public static Clock getInstance() {
         if (instance == null) {
-            return new Clock();
+            instance = new Clock();
         }
 
         return instance;
