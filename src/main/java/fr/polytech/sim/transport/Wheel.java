@@ -5,6 +5,8 @@ import fr.polytech.sim.cycling.Bike;
 import fr.polytech.sim.log.ConsoleLogger;
 import fr.polytech.sim.log.FactoryLogger;
 import fr.polytech.sim.log.Logger;
+import fr.polytech.sim.log.TimeStampedLoggerDecorator;
+
 import java.util.Objects;
 
 /**
@@ -13,7 +15,7 @@ import java.util.Objects;
 public class Wheel implements MobileObject {
     private static final double DEFAULT_MASSE = 10;
 
-    private final Logger logger = FactoryLogger.getLogger("Wheel");
+    private final Logger logger = new TimeStampedLoggerDecorator(FactoryLogger.getLogger("Wheel"));
     private final Clock clock = Clock.getInstance();
     private final Vehicle drive;
 

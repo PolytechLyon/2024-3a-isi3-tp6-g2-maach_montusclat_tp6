@@ -91,6 +91,23 @@ private final Logger logger = FactoryLogger.getLogger("Wheel");
 On obtient donc les logs dans la console de manière centralisée.
 
 ## Exercices 7
+Pour implémenter le design pattern décorateur nous avons créé notre décorateur abstrait `LoggerDecorator` ainsi que notre décorateur concret `TimestampedLoggerDecorator`.
+Cette classe possède un attribut `logger` de type `Logger` qui va être notre élément à décorer. On redéfinit la méthode `logMessage` pour ajouter l'heure actuelle à notre message.
+
+```java
+private Logger logger;
+
+public TimeStampedLoggerDecorator(Logger logger) {
+    this.logger = logger;
+}
+
+@Override
+// récupération de l'heure actuelle afin de l'ajouter au message de log
+public void log(String format, Object... args) {
+    String now = new SimpleDateFormat("HH:mm:ss").format(new Date());
+    this.logger.log(String.format("[%s] %s", now, format), args);
+}
+```
 
 ## Exercices 8
 
