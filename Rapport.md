@@ -111,6 +111,50 @@ public void log(String format, Object... args) {
 
 ## Exercices 8
 
+Peut-on avoir plusieurs lignes dans le fichier fr.polytech.sim.cycling.Bike ? À quoi correspond chaque de ces lignes ?
+
+Le design pattern utilisé par la classe Context vis-à-vis de ServiceLoader est Façade. La classe Context fournit une interface simplifiée pour l'utilisation de ServiceLoader et joue le rôle de point d'entrée.
+Au lieu du mot clé **new** on utilise alors `inject()` de la classe context de cette manière :
+
+```java
+Bike bike = Context.inject(Bike.class);
+```
+
+De plus, il est tout à fait possible d'avoir plusieurs lignes dans le fichier `fr.polytech.sim.cycling.Bike`. 
+Chaque ligne correspond à une implémentation de l'interface `Bike` que l'on souhaite injecter et notre `ServiceLoader` retourne alors un itérator. 
+
 ## Exercices 9
+
+Le type de retour de `injectAll()` est un itérator sur l'ensemble des instances la classe passée en paramètre.
+Le design pattern utilisé est l'Iterator permettant de parcourir les éléments d'une collection sans avoir besoin de connaitre et exposer son code interne comme expliqué précédemment.
+
+Implémentation de la méthode `injectAll()` :
+
+```java
+public static <T> Iterator<T> injectAll(Class<T> klass) {
+    return ServiceLoader.load(klass).iterator();
+}
+```
+
+Maintenant que l'on sait qu'on peut avoir plusieurs instances de vélos retournés par `injectAll()`, on peut boucler dessus notre iterator pour simuler plusieurs vélos.
+
+On ajoute plusieurs lignes dans le fichier `fr.polytech.sim.cycling.Bike` une pour un `SimpleBike` et une pour un `TagAlongBike`.
+
+fr.polytech.sim.cycling.SimpleBike
+fr.polytech.sim.cycling.TagAlongBike
+
+
+```java
+Bike bike;
+
+Iterator<Bike> bikes = Context.injectAll(Bike.class);
+
+while (bikes.hasNext()) {
+    bike = bikes.next();
+    
+    this.logger.log(bike.getClass().getSimpleName() + "'s speed %.2f Km/h.", bike.getVelocity());
+    this.logger.log(bike.getClass().getSimpleName() + "'s mass %.2f Kg.", bike.getMass());
+}
+```
 
 
